@@ -1729,3 +1729,129 @@ void ED_spacetype_view3d(void)
 
   BKE_spacetype_register(st);
 }
+
+
+/* ********************* space template *********************** */
+/* forward declare */
+void ED_spacetype_forgegameview(void);
+
+/* allocate and init some vars */
+static SpaceLink *forgegameview_create(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
+{
+  ARegion *region;
+  View3D *v3d;
+  RegionView3D *rv3d;
+
+  v3d = DNA_struct_default_alloc(View3D);
+
+  //if (scene) {
+  //  v3d->camera = scene->camera;
+  //}
+
+  /* main region */
+  region = MEM_callocN(sizeof(ARegion), "main region for forgegameview");
+
+  BLI_addtail(&v3d->regionbase, region);
+  region->regiontype = RGN_TYPE_WINDOW;
+
+  region->regiondata = MEM_callocN(sizeof(RegionView3D), "region forgegameview");
+  rv3d = region->regiondata;
+  rv3d->viewquat[0] = 1.0f;
+  rv3d->persp = RV3D_PERSP;
+  rv3d->view = RV3D_VIEW_USER;
+  rv3d->dist = 10.0;
+
+  return (SpaceLink *)v3d;
+}
+
+/* not spacelink itself */
+static void forgegameview_free(SpaceLink *sl)
+{
+  View3D *vd = (View3D *)sl;
+
+  if (vd->localvd) {
+    MEM_freeN(vd->localvd);
+  }
+
+  if (vd->runtime.properties_storage) {
+    MEM_freeN(vd->runtime.properties_storage);
+  }
+
+  if (vd->shading.prop) {
+    IDP_FreeProperty(vd->shading.prop);
+    vd->shading.prop = NULL;
+  }
+}
+
+/* spacetype; init callback for usage, should be redoable */
+static void forgegameview_init(wmWindowManager *UNUSED(wm), ScrArea *UNUSED(area))
+{
+
+  /* link area to SpaceXXX struct */
+
+  /* define how many regions, the order and types */
+
+  /* add types to regions */
+}
+
+static SpaceLink *forgegameview_duplicate(SpaceLink *sl)
+{
+  View3D *v3do = (View3D *)sl;
+  View3D *v3dn = MEM_dupallocN(sl);
+
+  /* clear or remove stuff from old */
+
+  if (v3dn->localvd) {
+    v3dn->localvd = NULL;
+    v3dn->runtime.properties_storage = NULL;
+  }
+  /* Only one View3D is allowed to have this flag! */
+  v3dn->runtime.flag &= ~V3D_RUNTIME_XR_SESSION_ROOT;
+
+  v3dn->local_collections_uuid = 0;
+  v3dn->flag &= ~(V3D_LOCAL_COLLECTIONS | V3D_XR_SESSION_MIRROR);
+
+  if (v3dn->shading.type == OB_RENDER) {
+    v3dn->shading.type = OB_SOLID;
+  }
+
+  if (v3dn->shading.prop) {
+    v3dn->shading.prop = IDP_CopyProperty(v3do->shading.prop);
+  }
+
+  /* copy or clear inside new stuff */
+
+  v3dn->runtime.properties_storage = NULL;
+
+  return (SpaceLink *)v3dn;
+}
+
+static void forgegameview_operatortypes(void)
+{
+  /* register operator types for this space */
+}
+
+static void forgegameview_keymap(wmKeyConfig *UNUSED(keyconf))
+{
+  /* add default items to keymap */
+}
+
+/* only called once, from screen/spacetypes.c */
+void ED_spacetype_forgegameview(void)
+{
+  SpaceType* st = MEM_callocN(sizeof(SpaceType), "st fgv");
+
+  st->spaceid = SPACE_FORGEGAMEVIEW;
+  strncpy(st->name, "TheForge GameView", BKE_ST_MAXNAME);
+
+  st->create = forgegameview_create;
+  st->free = forgegameview_free;
+  st->init = forgegameview_init;
+  st->duplicate = forgegameview_duplicate;
+  st->operatortypes = forgegameview_operatortypes;
+  st->keymap = forgegameview_keymap;
+
+  BKE_spacetype_register(st);
+}
+
+/* ****************************** end template *********************** */

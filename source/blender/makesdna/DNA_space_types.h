@@ -1746,8 +1746,9 @@ typedef enum eSpace_Type {
   SPACE_CLIP = 20,
   SPACE_TOPBAR = 21,
   SPACE_STATUSBAR = 22,
+  SPACE_FORGEGAMEVIEW = 23,
 
-#define SPACE_TYPE_LAST SPACE_STATUSBAR
+#define SPACE_TYPE_LAST SPACE_FORGEGAMEVIEW
 } eSpace_Type;
 
 /* use for function args */

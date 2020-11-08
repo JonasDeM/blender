@@ -87,6 +87,11 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      "Editor for node-based shading and compositing tools"},
     {SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "Video Sequencer", "Video editing tools"},
     {SPACE_CLIP, "CLIP_EDITOR", ICON_TRACKER, "Movie Clip Editor", "Motion tracking tools"},
+    {SPACE_FORGEGAMEVIEW,
+     "FORGE_GAMEVIEW",
+     ICON_VIEW3D,
+     "Forge GameView",
+     "View the current frame of a running The Forge game."},
 
     /* Animation */
     {0, "", ICON_NONE, "Animation", ""},
